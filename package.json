@@ -1,0 +1,58 @@
+{
+  "name": "refreshments",
+  "version": "1.0.0",
+  "description": "Food Delvery Application for large restaurants with presence everywhere",
+  "main": "index.js",
+  "scripts": {
+    "start": "babel-node src/index.js",
+    "server": "nodemon --exec babel-node src/index.js",
+    "createTables": "babel-node src/helpers/db/createTables.js",
+    "dropTables": "babel-node src/helpers/db/dropTables.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Johnpaul-Attamah/refreshments.git"
+  },
+  "keywords": [
+    "fooddelivery",
+    "fastfood",
+    "food",
+    "ecommerce",
+    "mernstack",
+    "reactandredux",
+    "reactredux"
+  ],
+  "author": "Johnpaul Attamah",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Johnpaul-Attamah/refreshments/issues"
+  },
+  "homepage": "https://github.com/Johnpaul-Attamah/refreshments#readme",
+  "devDependencies": {
+    "@babel/cli": "^7.5.5",
+    "@babel/core": "^7.5.5",
+    "@babel/node": "^7.5.5",
+    "@babel/preset-env": "^7.5.5",
+    "eslint": "^6.3.0",
+    "eslint-config-airbnb": "^18.0.1",
+    "eslint-config-airbnb-base": "^14.0.0",
+    "eslint-plugin-import": "^2.18.2",
+    "eslint-plugin-jsx-a11y": "^6.2.3",
+    "eslint-plugin-prettier": "^3.1.0",
+    "eslint-plugin-react": "^7.14.3",
+    "eslint-plugin-react-hooks": "^1.7.0",
+    "prettier": "^1.18.2"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.19.0",
+    "dotenv": "^8.1.0",
+    "express": "^4.17.1",
+    "gravatar": "^1.8.0",
+    "jsonwebtoken": "^8.5.1",
+    "moment": "^2.24.0",
+    "pg": "^7.12.1",
+    "validator": "^11.1.0"
+  }
+}
