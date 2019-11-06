@@ -4,7 +4,9 @@ import isEmpty from './is-empty';
 export default function validateLoginInput(data) {
   const errors = {};
 
+  // eslint-disable-next-line no-param-reassign
   data.email = !isEmpty(data.email) ? data.email : '';
+  // eslint-disable-next-line no-param-reassign
   data.password = !isEmpty(data.password) ? data.password : '';
 
   if (!validator.isEmail(data.email)) {

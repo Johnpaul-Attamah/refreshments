@@ -9,6 +9,10 @@ export default class CreateTableSchema {
 
   constructor() {
     this.pool = pool;
+    this.createUserRoles = `CREATE TYPE roles AS ENUM(
+      'superAdmin', 
+      'admin', 
+      'user')`;
     this.createUsersTable = `CREATE TABLE IF NOT EXISTS users(
         user_id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
         name varchar(255) NOT NULL,
@@ -19,8 +23,7 @@ export default class CreateTableSchema {
         avatar varchar(255) NOT NULL,
         created_date TIMESTAMP,
         modified_date TIMESTAMP,
-        is_admin boolean DEFAULT false,
-        is_super_admin boolean DEFAULT false
+        role roles
       )`;
   }
 
@@ -31,8 +34,9 @@ export default class CreateTableSchema {
    */
   async create() {
     try {
+      await this.pool.query(this.createUserRoles);
       await this.pool.query(this.createUsersTable);
-      return await this.pool.end();
+      return this.pool.end;
     } catch (err) {
       return err;
     }

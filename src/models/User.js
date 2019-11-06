@@ -27,11 +27,11 @@ class User {
       const query = {
         text: `INSERT INTO users (
           name, email, hashed_password,
-          phone_number, address, avatar, created_date, modified_date
-          ) VALUES($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *`,
+          phone_number, address, avatar, created_date, modified_date, role
+          ) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *`,
         values: [this.user.name, this.user.email, hash,
           this.user.phone, this.user.homeAddress,
-          avatar, moment(new Date()), moment(new Date())],
+          avatar, moment(new Date()), moment(new Date()), 'user'],
       };
       const result = await this.pool.query(query);
       if (!result.rows[0]) throw new Error();
@@ -66,8 +66,7 @@ class User {
           avatar: user.avatar,
           phone: user.phone_number,
           address: user.address,
-          role1: user.is_admin,
-          role2: user.is_super_admin,
+          role: user.role,
         });
       }
       return ({ code: 3, id: null });

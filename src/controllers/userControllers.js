@@ -67,8 +67,7 @@ router.post('/login', async (req, res) => {
         avatar: user.avatar,
         phone: user.phone,
         address: user.address,
-        role1: user.role1,
-        role2: user.role2,
+        role: user.role,
       };
       const token = jwt.sign(payload, process.env.SECRET_OR_KEY, {
         expiresIn: 3600,
@@ -104,8 +103,7 @@ router.get('/current', (req, res) => {
     avatar: req.body.avatar,
     phone: req.body.phone,
     address: req.body.address,
-    role1: req.body.role1,
-    role2: req.body.role2,
+    role: req.body.role,
   });
 });
 
