@@ -13,3 +13,5 @@ b. Accept and decline orders
 c. Mark orders as completed
 6. A user should be able to see a history of ordered food
 
+# Details: 
+
