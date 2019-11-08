@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/Johnpaul-Attamah/refreshments.svg?branch=master)](https://travis-ci.org/Johnpaul-Attamah/refreshments)
+
 # Project Overview:
 **Refreshments** is a food delivery service app for a restaurant.
 ## Required Features:
