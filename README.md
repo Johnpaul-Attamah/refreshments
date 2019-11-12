@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/Johnpaul-Attamah/refreshments.svg?branch=develop)](https://travis-ci.org/Johnpaul-Attamah/refreshments)  [![Coverage Status](https://coveralls.io/repos/github/Johnpaul-Attamah/refreshments/badge.svg?branch=develop)](https://coveralls.io/github/Johnpaul-Attamah/refreshments?branch=develop)
+[![Build Status](https://travis-ci.org/Johnpaul-Attamah/refreshments.svg?branch=develop)](https://travis-ci.org/Johnpaul-Attamah/refreshments)  [![Coverage Status](https://coveralls.io/repos/github/Johnpaul-Attamah/refreshments/badge.svg?branch=develop)](https://coveralls.io/github/Johnpaul-Attamah/refreshments?branch=develop)    [![Maintainability](https://api.codeclimate.com/v1/badges/709b04175e9c36708530/maintainability)](https://codeclimate.com/github/Johnpaul-Attamah/refreshments/maintainability)  [![Test Coverage](https://api.codeclimate.com/v1/badges/709b04175e9c36708530/test_coverage)](https://codeclimate.com/github/Johnpaul-Attamah/refreshments/test_coverage)
 
 # Project Overview:
 **Refreshments** is a food delivery service app for a restaurant.
