@@ -1,22 +1,19 @@
 language: node_js
-node_js: 
-  - "stable"
+node_js:
+- stable
 cache:
   directories:
-    - "node_modules"
+  - node_modules
 services:
-  - postgresql
+- postgresql
 env:
   global:
   - NODE_ENV=test
-addons:
-    code_climate:
-        repo_token:
-          secure: "xzA8nj38HweOO12G1w7EG/dfmFrnopUeOWJY4G0QF9FXURwdcX848YM1RMW08RH4m3M4As+dIAIRFDILkv8MQ4PPBBc/UjSHU8rUvOM9UUTDS2n696IbLekBVE6yHUMRgMC0e1MynXqPh+KCVD6CqVbNEndBafDj08Dxej5h8uOnUX93PQlLOvTGE/vrqTSouGbgEzo9Xn0L8bfFWtkLyUJBC7qY6chZfH4UR58sphFQVazkp8YdS3PCL3h6WA8Q6tfXG56EN76gRIGxZbVCQvVwHCUf60KkIepNXg8WE0d/aqTKarZYr8axvARTAiXkdGO+g4rNWz1A+GOxWSnQW4HFxzjG501VJcSkwDEVCh2He5xWHlIiczEWaa0QwVvVzvLBdLCN11jmf0VmtX0d7wedrZ0qK0552B6jl+kvz279pqyThnIyCeHDnSN3IYLmXKBt6TOfVsX+j+8Cu3gtxESqMyvq5e3Onxq/8g/4Qcyl+Ri0ruqnlgRPqDHobzgLRCrjELgrhfXTBpgRIQrK1Tdkkm6I22iVhFPwfNmmN9e8sgGzTzuM/wfZxycCelM3D29m4hUnpna5yPexnrdNIhe9Xq0WGTnTBuQmEL58tIMotb/InYScjZxniqxU0Z24IUOmsqEJglleduUqO/so8kM6/tIkzJGbFsaIS76XVXA="
+  - secure: nil41MprqdkMKtai/ka3umEEs+BOfthFRPY8qJhTWB248ZIRqHpykLO92FlO+MARAZ10s+yI6ugeqkOcIkMNy0vI2GK/ZYvxCeLvXdPWS3a3eutfCucNbN/jmUnzMQER78EEzYQMdbe6d2nJm0V5eTUUXb3S7JSx83vmOqP4dPPU86w9KJaUxgPUry/j7Xt2Meoqu5vksfBJnfFnfniA8PIGTXqJpgQ72haCg/2gJnMRFVsGiua/XFmoZD44FzfNET1HZH7l6wqgrAa6WcGWW1oesQni4VrwInGc58MMdb15swgqXvPn/yR5dtj/wm9YYqbYxS7q0p4mM0hx1jyZFTY2cfXGOix1t3WVexuED4FJ6rYpftwYMk5bOpLoaRnIWO56ZtQbcV2m3cRzos9tkFCnUwgk24MERWqaYAqyYXrjifkyecGfpyHX6efJISxFR3vArCCMsUNfPgcjOb4DxGhjrmlKqo+xO6lf8M5T63PexraeX0LJ66QhzdHUwYKcgmNbhy0EEe/GNH0MT/JOldps83pwGQdLiMx+45u0bsqouuUue7vhVWk3KuSt37asIJe8LvQOGrKT2NlLeOHG3xswBv8TvmQRtgz9BfDTLH7hGtiS8c6QympWtl24INufoSlhInscN5gHN2477kmiDQlRDmcL7xZzp2Pf7jenYSw= 
 script:
-  - npm test
+- npm test
 before_script:
-  - npm install codeclimate-test-reporter nyc -g
+- npm install codeclimate-test-reporter nyc -g
 after_script:
 - npm run coverage
 - codeclimate-test-reporter < ./coverage/lcov.info
