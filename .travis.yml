@@ -11,3 +11,5 @@ env:
   - NODE_ENV=test
 script:
   - npm test
+after_script:
+- npm run coveralls
