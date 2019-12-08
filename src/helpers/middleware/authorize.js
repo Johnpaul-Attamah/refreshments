@@ -17,13 +17,13 @@ const verifyToken = (router) => {
         res.status(401).json({ message: 'Failed to authenticate', err: 'Session expired' });
         return;
       }
-      req.body.id = decoded.id;
-      req.body.name = decoded.name;
-      req.body.email = decoded.email;
-      req.body.avatar = decoded.avatar;
-      req.body.phone = decoded.phone;
-      req.body.address = decoded.address;
-      req.body.role = decoded.role;
+      req.query.id = decoded.id;
+      req.query.name = decoded.name;
+      req.query.email = decoded.email;
+      req.query.avatar = decoded.avatar;
+      req.query.phone = decoded.phone;
+      req.query.address = decoded.address;
+      req.query.role = decoded.role;
       next();
     });
   });

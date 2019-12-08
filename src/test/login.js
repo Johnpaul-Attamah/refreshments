@@ -1,7 +1,6 @@
 import chai from 'chai';
 import chaiHttp from 'chai-http';
 import app from '../index';
-import Pool from '../helpers/dbConnection';
 
 chai.use(chaiHttp);
 chai.should();

@@ -43,6 +43,11 @@ router.post('/register', async (req, res) => {
   }
 });
 
+/**
+ * @route Post api/v1/auth/login
+ * @desc  user login
+ * @access  Public
+ */
 router.post('/login', async (req, res) => {
   const { errors, isValid } = validateLoginInput(req.body);
 
@@ -95,15 +100,20 @@ router.post('/login', async (req, res) => {
  */
 authorizeUser(router);
 
+/**
+ * @route GET api/v1/auth/current
+ * @desc  get current user
+ * @access  Private
+ */
 router.get('/current', (req, res) => {
   res.json({
-    id: req.body.id,
-    name: req.body.name,
-    email: req.body.email,
-    avatar: req.body.avatar,
-    phone: req.body.phone,
-    address: req.body.address,
-    role: req.body.role,
+    id: req.query.id,
+    name: req.query.name,
+    email: req.query.email,
+    avatar: req.query.avatar,
+    phone: req.query.phone,
+    address: req.query.address,
+    role: req.query.role,
   });
 });
 
