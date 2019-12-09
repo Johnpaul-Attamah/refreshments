@@ -21,15 +21,16 @@ class Admin extends User {
    * @desc: get user by id
    */
   async getUserById(userId) {
+    // eslint-disable-next-line no-useless-catch
     try {
       const user = await this.pool.query('SELECT * FROM users WHERE user_id = $1',
         [userId]);
-      if (user) {
+      if (user.rows[0]) {
         return user.rows[0];
       }
       return false;
     } catch (error) {
-      return error;
+      throw error;
     }
   }
 
@@ -87,7 +88,7 @@ class Admin extends User {
     };
     try {
       const returnedUser = await this.pool.query(query);
-      if (!returnedUser) {
+      if (!returnedUser.rows) {
         return false;
       }
       return returnedUser.rows[0];

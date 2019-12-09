@@ -49,7 +49,7 @@ router.get('/:userId', async (req, res) => {
           user,
         });
       }
-      return res.status(404).json({ message: 'user not found' });
+      return res.status(500).json({ message: 'invalid uuid' });
     } catch (error) {
       return res.status(500).json({
         error,
@@ -121,7 +121,7 @@ router.post('/remove/:userId', async (req, res) => {
           name: admin.name,
         });
       }
-      return res.status(404).json({ message: 'user not found' });
+      return res.status(500).json({ message: 'invalid uuid' });
     } catch (error) {
       return res.status(500).json({
         error,
