@@ -14,19 +14,15 @@ authorizeUser(router);
  * @access  Private
  */
 router.get('/', async (req, res) => {
-  if ((req.query.role === 'admin') || (req.query.role === 'superAdmin') || (req.query.role === 'user')) {
-    try {
-      const profileModel = Profile(req.query);
-      const profile = await profileModel.userProfile(req.query.id);
-      return res.status(200).json({
-        status: 'Success',
-        profile,
-      });
-    } catch (error) {
-      return res.status(500).json({ error });
-    }
-  } else {
-    return res.status(403).json({ message: 'Access Denied' });  
+  try {
+    const profileModel = Profile(req.query);
+    const profile = await profileModel.userProfile(req.query.id);
+    return res.status(200).json({
+      status: 'Success',
+      profile,
+    });
+  } catch (error) {
+    return res.status(500).json({ error });
   }
 });
 
@@ -36,32 +32,29 @@ router.get('/', async (req, res) => {
  * @access  Private
  */
 router.post('/change_password', async (req, res) => {
-  if ((req.query.role === 'admin') || (req.query.role === 'superAdmin') || (req.query.role === 'user')) {
-    const profileModel = Profile(req.body);
-    try {
-      const presentUser = await profileModel.userProfile(req.query.id);
-      if (presentUser) {
-        const passwordMatch = await profileModel.comPassword(req.body.oldPassword, presentUser.hashed_password);
-        if (passwordMatch) {
-          const newPassword = profileModel.newPassword(req.body.newPassword, req.query.id);
-          return res.status(200).json({
-            status: 'success',
-            message: 'Password reset successfull',
-          });
-        }
-        return res.status(401).json({
-          status: 'failed',
-          errors: 'Passwords do not match',
+  const profileModel = Profile(req.body);
+  try {
+    const presentUser = await profileModel.userProfile(req.query.id);
+    if (presentUser) {
+      const passwordMatch = await profileModel
+        .comPassword(req.body.oldPassword, presentUser.hashed_password);
+      if (passwordMatch) {
+        const newPassword = profileModel.newPassword(req.body.newPassword, req.query.id);
+        return res.status(200).json({
+          status: 'success',
+          message: 'Password reset successfull',
         });
       }
-      return res.status(404).json({ message: 'User not found' });
-    } catch (error) {
-      return res.status(500).json({
-        error,
+      return res.status(401).json({
+        status: 'failed',
+        errors: 'Passwords do not match',
       });
     }
-  } else {
-    return res.status(403).json({ message: 'Access Denied' });
+    return res.status(404).json({ message: 'User not found' });
+  } catch (error) {
+    return res.status(500).json({
+      error,
+    });
   }
 });
 
@@ -71,25 +64,21 @@ router.post('/change_password', async (req, res) => {
  * @access  Private
  */
 router.post('/edit_profile', async (req, res) => {
-  if ((req.query.role === 'admin') || (req.query.role === 'superAdmin') || (req.query.role === 'user')) {
-    const profileModel = Profile(req.body);
-    try {
-      const newProfile = await profileModel.newProfile(req.body, req.query.id);
-      if (newProfile) {
-        return res.status(200).json({
-          status: 'Success',
-          message: 'Profile Update Successful',
-          newProfile,
-        });
-      }
-      return res.status(400).json({ message: 'Failed to update profile data.' });
-    } catch (error) {
-      return res.status(500).json({
-        error,
+  const profileModel = Profile(req.body);
+  try {
+    const newProfile = await profileModel.newProfile(req.body, req.query.id);
+    if (newProfile) {
+      return res.status(200).json({
+        status: 'Success',
+        message: 'Profile Update Successful',
+        newProfile,
       });
     }
-  } else {
-    return res.status(403).json({ message: 'Access Denied' });
+    return res.status(400).json({ message: 'Failed to update profile data.' });
+  } catch (error) {
+    return res.status(500).json({
+      error,
+    });
   }
 });
 

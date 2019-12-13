@@ -190,6 +190,30 @@ class Order {
       return error;
     }
   }
+
+  async checkQuantityINProducts(productName) {
+    try {
+      const result = await this.pool.query('SELECT name, quantity FROM products WHERE name = $1', [productName]);
+      if (result.rows) {
+        return result.rows[0];
+      }
+      return false;
+    } catch (error) {
+      return error;
+    }
+  }
+
+  async updateNewQuantity(quantity, productName) {
+    try {
+      const result = await this.pool.query('UPDATE products SET quantity = $1 WHERE name = $2 RETURNING *', [quantity, productName]);
+      if (result.rows) {
+        return result.rows[0];
+      }
+      return false;
+    } catch (error) {
+      return error;
+    }
+  }
 }
 
 export default Order;

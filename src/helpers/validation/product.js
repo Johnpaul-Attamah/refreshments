@@ -30,11 +30,11 @@ export default function validateProducts(data) {
     errors.productImg = 'Product image is required';
   }
 
-  if (validator.isEmpty(data.quantity)) {
+  if (data.quantity.length === 0) {
     errors.quantity = 'Product quantity is required';
   }
 
-  if (validator.isEmpty(data.price)) {
+  if (data.price.length === 0) {
     errors.price = 'Product Price field is required';
   }
 
@@ -42,17 +42,17 @@ export default function validateProducts(data) {
     errors.description = 'Product Description is required';
   }
 
-  if (!validator.isNumeric(data.quantity)) {
+  if (isNaN(data.quantity)) {
     errors.quantity = 'Quantity must be a number';
   }
-  if (!validator.isNumeric(data.price)) {
+  if (isNaN(data.price)) {
     errors.price = 'Price must be a number';
   }
 
-  if (!validator.isInt(data.quantity)) {
+  if ((!Number.isNaN(data.quantity)) && (data.quantity.toString().indexOf('.') !== -1)) {
     errors.quantity = 'Quantity must be an integer';
   }
-  if (!validator.isFloat(data.price)) {
+  if ((!Number.isNaN(data.price)) && (data.price.toString().indexOf('.') === -1) && (data.price.length !== 0)) {
     errors.price = 'Price must be a floating point number';
   }
 

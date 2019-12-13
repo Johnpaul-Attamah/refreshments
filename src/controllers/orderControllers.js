@@ -121,47 +121,63 @@ router.get('/:userId/my_orders/:orderId', async (req, res) => {
  * @access  Private
  */
 router.post('/', async (req, res) => {
-  if ((req.query.role === 'admin') || (req.query.role === 'superAdmin') || (req.query.role === 'user')) {
-    const { errors, isValid } = validateOrder(req.body.items);
+  const { errors, isValid } = validateOrder(req.body.items);
 
-    try {
-      if (!isValid) {
-        return res.status(400).json(errors);
+  try {
+    if (!isValid) {
+      return res.status(400).json(errors);
+    }
+
+    const orderModel = new Order(req.body);
+
+    const checkProduct = await Promise.all(req.body.items.map((product) => orderModel.peekMenu(product)));
+    const productNumbers = [];
+    const inputConProdNums = [];
+    for (let i = 0; i < checkProduct.length; i += 1) {
+      const singleProductCheck = checkProduct[i];
+      if (!singleProductCheck) {
+        return res.status(404).json({ message: 'product not found in the menu' });
       }
-
-      const orderModel = new Order(req.body);
-
-      const checkProduct = await Promise.all(req.body.items.map((product) => orderModel.peekMenu(product)));
-      const productNumbers = [];
-      const inputConProdNums = [];
-      for (let i = 0; i < checkProduct.length; i += 1) {
-        const singleProductCheck = checkProduct[i];
-        if (!singleProductCheck) {
-          return res.status(404).json({ message: 'product not found in the menu' });
+      productNumbers.push(singleProductCheck);
+    }
+    for (let i = 0; i < productNumbers.length; i += 1) {
+      const value = Object.assign(productNumbers[i], req.body.items[i]);
+      inputConProdNums.push(value);
+    }
+    const productArray = [];
+    const getNewQuantity = await Promise.all(req.body.items.map((product) => orderModel.checkQuantityINProducts(product.name, product.quantity)));
+    if (getNewQuantity[0]) {
+      for (let count = 0; count < req.body.items.length; count += 1) {
+        if (req.body.items[count].quantity > getNewQuantity[count].quantity) {
+          return res.status(400).json({
+            message: 'not enough quantity for selected product(s)',
+            item: getNewQuantity[count].name,
+          });
         }
-        productNumbers.push(singleProductCheck);
-      }
-      for (let i = 0; i < productNumbers.length; i += 1) {
-        const value = Object.assign(productNumbers[i], req.body.items[i]);
-        inputConProdNums.push(value);
+        getNewQuantity[count].quantity -= req.body.items[count].quantity;
+        productArray.push(getNewQuantity[count]);
       }
       if (!req.body.recievingAddress) req.body.recievingAddress = await orderModel.getUserAddress(req.query.id);
       const newOrders = await orderModel.placeOrder(req.body, req.query.id);
       if (newOrders) {
         const fillOrderedProducts = await Promise.all(inputConProdNums.map((inputObj) => orderModel.completeProductOrders(inputObj, newOrders.order_id, (inputObj.price * inputObj.quantity))));
-        return res.status(201).json({
-          status: 'Success',
-          message: 'order Placed successfully!',
-          newOrders,
-          productDetails: fillOrderedProducts,
-        });
+        const updateNewQuantity = await Promise.all(productArray.map((newQuantity) => orderModel.updateNewQuantity(newQuantity.quantity, newQuantity.name)));
+        if (updateNewQuantity[0]) {
+          return res.status(201).json({
+            status: 'Success',
+            message: 'order Placed successfully!',
+            newOrders,
+            productDetails: fillOrderedProducts,
+            quantitiesRemaining: updateNewQuantity,
+          });
+        }
+        return res.status(400).json({ message: 'Error updating new Quantity' });
       }
       return res.status(400).json({ error: 'Problem creating orders.' });
-    } catch (error) {
-      return res.status(500).json(error);
     }
-  } else {
-    return res.status(403).json({ message: 'Access Denied' });
+    return res.status(400).json({ message: 'unable to get product details' });
+  } catch (error) {
+    return res.status(500).json(error);
   }
 });
 

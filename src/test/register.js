@@ -36,7 +36,7 @@ describe('User Validation', () => {
         password: 'mypassword',
         password2: 'mypassword',
         homeAddress: 'onuiyi Nsukka',
-        phone: '09034523487',
+        phone: '08034923465',
       };
       return chai.request(app)
         .post('/api/v1/auth/register')

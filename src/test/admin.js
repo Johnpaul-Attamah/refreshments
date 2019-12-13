@@ -1,7 +1,6 @@
 import chai from 'chai';
 import chaiHttp from 'chai-http';
 import app from '../index';
-import Pool from '../helpers/dbConnection';
 
 chai.use(chaiHttp);
 chai.should();
@@ -48,7 +47,7 @@ describe('Administration', () => {
     it('should Remove admin privileges from user', () => {
       const user = {
         token: token1,
-        userId: '55002f80-545f-48d5-900f-53350a2a6d09',
+        userId: '54d4ed0c-a41f-409a-9b89-ae645a096f9b',
       };
       return chai.request(app)
         .post(`/api/v1/admin/remove/${user.userId}`)
@@ -68,7 +67,7 @@ describe('Administration', () => {
     it('should throw an error if user is not admin', () => {
       const user = {
         token: token1,
-        userId: '55002f80-545f-48d5-900f-53350a2a6d09',
+        userId: '54d4ed0c-a41f-409a-9b89-ae645a096f9b',
       };
       return chai.request(app)
         .post(`/api/v1/admin/remove/${user.userId}`)
@@ -88,7 +87,7 @@ describe('Administration', () => {
     it('should Make a user an admin', () => {
       const user = {
         token: token1,
-        userId: '55002f80-545f-48d5-900f-53350a2a6d09',
+        userId: '54d4ed0c-a41f-409a-9b89-ae645a096f9b',
       };
       return chai.request(app)
         .post(`/api/v1/admin/create/${user.userId}`)
@@ -108,7 +107,7 @@ describe('Administration', () => {
     it('should throw error if a user is already an admin', () => {
       const user = {
         token: token1,
-        userId: '55002f80-545f-48d5-900f-53350a2a6d09',
+        userId: '54d4ed0c-a41f-409a-9b89-ae645a096f9b',
       };
       return chai.request(app)
         .post(`/api/v1/admin/create/${user.userId}`)
@@ -147,7 +146,7 @@ describe('Administration', () => {
     it('should throw error if logged in user is not the super admin', () => {
       const user = {
         token: token1,
-        userId: '55002f80-545f-48d5-900f-53350a2a6d09',
+        userId: '54d4ed0c-a41f-409a-9b89-ae645a096f9b',
       };
       return chai.request(app)
         .post(`/api/v1/admin/create/${user.userId}`)
@@ -182,7 +181,7 @@ describe('Administration', () => {
     it('should get a user by userId', () => {
       const user = {
         token: token1,
-        userId: '55002f80-545f-48d5-900f-53350a2a6d09',
+        userId: 'bf32be3f-60ca-4d44-9d1f-b79b330ad91d',
       };
       return chai.request(app)
         .get(`/api/v1/admin/${user.userId}`)
