@@ -3,13 +3,18 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-const env = process.env.NODE_ENV || 'development';
-
 let dbConnection;
-if (env === 'test') {
-  dbConnection = process.env.TEST_DATABASE_URL;
-} else {
-  dbConnection = process.env.DATABASE_URL;
+
+if (process.env.NODE_ENV == 'production') {
+  dbConnection = process.env.PROD_DB_URI;
+}
+
+if (process.env.NODE_ENV == 'test') {
+  dbConnection = process.env.TEST_DB_URI;
+}
+
+if (process.env.NODE_ENV == 'development') {
+  dbConnection = process.env.DEV_DB_URI;
 }
 
 

@@ -2,6 +2,8 @@ import express from 'express';
 import Product from '../models/Product';
 import validateProducts from '../helpers/validation/product';
 import authorizeUser from '../helpers/middleware/authorize';
+import cloudinary from '../utils/cloudinary';
+import upload from '../utils/multer';
 
 
 const router = express.Router();
@@ -15,7 +17,7 @@ router.get('/', async (req, res) => {
   const product = new Product(req.body);
   try {
     const menu = await product.getMenu();
-    if (menu) {
+    if (menu[0]) {
       return res.status(200).json({
         status: 'success',
         message: 'menu Fetched successfully!',
@@ -81,7 +83,7 @@ router.get('/:userId/products', async (req, res) => {
  * @desc  Add Product to menu
  * @access  Private
  */
-router.post('/', async (req, res) => {
+router.post('/', upload.single('image'), async (req, res) => {
   if ((req.query.role === 'admin') || (req.query.role === 'superAdmin')) {
     const { errors, isValid } = validateProducts(req.body);
     try {
@@ -91,7 +93,9 @@ router.post('/', async (req, res) => {
       const product = new Product(req.body);
       const productExist = await product.checkItemExistBefore(req.body);
       if (!productExist) {
-        const newProduct = await product.createProduct(req.query.id);
+        const result = await cloudinary
+          .uploader.upload(req.file.path, { upload_preset: 'fast_food' });
+          const newProduct = await product.createProduct(req.query.id, result.secure_url, result.public_id);
         if (newProduct) {
           const createdBy = await product.createdBy(newProduct.user_id);
           return res.status(201).json({
@@ -122,7 +126,7 @@ router.post('/', async (req, res) => {
  * @desc  Update a product in menu
  * @access  Private
  */
-router.put('/products/:productId', async (req, res) => {
+router.put('/products/:productId', upload.single('image'), async (req, res) => {
   if ((req.query.role === 'admin') || (req.query.role === 'superAdmin')) {
     const { errors, isValid } = validateProducts(req.body);
     try {
@@ -132,7 +136,23 @@ router.put('/products/:productId', async (req, res) => {
       const products = new Product(req.body);
       const product = await products.getMenuByProductNumber(req.params.productId);
       if (product) {
-        const editMenu = await products.editMenu(req.body, product[0].product_number);
+        let result;
+        if (req.file) {
+          await cloudinary.uploader.destroy(product[0].cloudinary_id);
+          result = await cloudinary.uploader.upload(req.file.path, {
+            upload_preset: 'fast_food',
+          });
+        }
+        const data = {
+          name: req.body.name || product[0].name,
+          productImg: result ? result.secure_url : product[0].product_img,
+          cloudinaryId: result ? result.public_id : product[0].cloudinary_id,
+          quantity: req.body.quantity || product[0].quantity,
+          price: req.body.price || product[0].price,
+          description: req.body.description || product[0].description,
+          productNumber: product[0].product_number,
+        };
+        const editMenu = await products.editMenu(data);
         if (editMenu) {
           const updatedBy = await products.createdBy(req.query.id);
           return res.status(200).json({
@@ -143,11 +163,12 @@ router.put('/products/:productId', async (req, res) => {
           });
         }
         return res.status(400).json({
-          error: 'Problem updating product'
+          error: 'Problem updating product',
         });
       }
       return res.status(404).json({ message: 'The product with given id was not found.' });
     } catch (error) {
+      console.log(error)
       return res.status(500).json({ error });
     }
   } else {
@@ -166,6 +187,7 @@ router.delete('/products/:productId', async (req, res) => {
       const products = new Product(req.params);
       const product = await products.getMenuByProductNumber(req.params.productId);
       if (product[0]) {
+        await cloudinary.uploader.destroy(product[0].cloudinary_id);
         const deleteMenu = await products.deleteProduct(req.query.id, product[0].product_number);
         if (deleteMenu.value) {
           const deletedBy = await products.createdBy(req.query.id);
@@ -176,7 +198,7 @@ router.delete('/products/:productId', async (req, res) => {
           });
         }
         return res.status(400).json({
-          error: 'Problem deleting product'
+          error: 'Problem deleting product',
         });
       }
       return res.status(404).json({ message: 'The product with given id was not found.' });

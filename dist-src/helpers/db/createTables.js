@@ -1,15 +1,22 @@
-import pool from '../dbConnection';
-import dotenv from 'dotenv';
-dotenv.config();
+"use strict";
 
-export default class CreateTableSchema {
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _dbConnection = _interopRequireDefault(require("../dbConnection"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+class CreateTableSchema {
   /**
      * Database schemma.
      * @constructor,
      * @desc: Create database tables at once
      */
   constructor() {
-    this.pool = pool;
+    this.pool = _dbConnection.default;
     this.createUserRoles = `CREATE TYPE roles AS ENUM(
       'superAdmin', 
       'admin', 
@@ -30,8 +37,7 @@ export default class CreateTableSchema {
         product_number uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
         user_id uuid REFERENCES users(user_id),
         name varchar(255) NOT NULL,
-        product_img text NOT NUll,
-        cloudinary_id text NOT NULL,
+        product_img text NOT Null,
         quantity integer NOT NULL,
         price float NOT NULL,
         description text NOT NULL,
@@ -55,12 +61,13 @@ export default class CreateTableSchema {
       CONSTRAINT Pk_ProductsOrders PRIMARY KEY(order_id, product_number)
     )`;
   }
-
   /**
    * creates database tables.
    * @method
    *
    */
+
+
   async create() {
     try {
       await this.pool.query(this.createUserRoles);
@@ -70,11 +77,11 @@ export default class CreateTableSchema {
       await this.pool.query(this.createProductsOrdersTable);
       return this.pool.end;
     } catch (err) {
-      console.log(process.env.NODE_ENV);
-      console.log(err);
       return err;
     }
   }
+
 }
 
+exports.default = CreateTableSchema;
 new CreateTableSchema().create();
