@@ -23,7 +23,7 @@ app.get('/', (req, res) => {
 
 app.get('*', (req, res) => {
   res.send({
-    Message: 'Welcome',
+    Message: 'Welcome here',
   });
 });
 
