@@ -143,6 +143,33 @@ class Admin extends _User.default {
       return error;
     }
   }
+  /**
+   * Database schemma.
+   * @method,
+   * @desc: update order status
+   */
+
+
+  async UpdateOrder(orderId, status) {
+    const query = {
+      text: `UPDATE Orders 
+                  SET status = $1, modified_date = $2
+                  WHERE order_id = $3 RETURNING *`,
+      values: [status, (0, _moment.default)(new Date()), orderId]
+    };
+
+    try {
+      const modifiedOrder = await this.pool.query(query);
+
+      if (!modifiedOrder) {
+        return false;
+      }
+
+      return modifiedOrder.rows[0];
+    } catch (error) {
+      return error;
+    }
+  }
 
 }
 

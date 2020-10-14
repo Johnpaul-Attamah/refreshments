@@ -13,6 +13,10 @@ var _product = _interopRequireDefault(require("../helpers/validation/product"));
 
 var _authorize = _interopRequireDefault(require("../helpers/middleware/authorize"));
 
+var _cloudinary = _interopRequireDefault(require("../utils/cloudinary"));
+
+var _multer = _interopRequireDefault(require("../utils/multer"));
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 const router = _express.default.Router();
@@ -29,7 +33,7 @@ router.get('/', async (req, res) => {
   try {
     const menu = await product.getMenu();
 
-    if (menu) {
+    if (menu[0]) {
       return res.status(200).json({
         status: 'success',
         message: 'menu Fetched successfully!',
@@ -117,7 +121,7 @@ router.get('/:userId/products', async (req, res) => {
  * @access  Private
  */
 
-router.post('/', async (req, res) => {
+router.post('/', _multer.default.single('image'), async (req, res) => {
   if (req.query.role === 'admin' || req.query.role === 'superAdmin') {
     const {
       errors,
@@ -135,7 +139,10 @@ router.post('/', async (req, res) => {
       const productExist = await product.checkItemExistBefore(req.body);
 
       if (!productExist) {
-        const newProduct = await product.createProduct(req.query.id);
+        const result = await _cloudinary.default.uploader.upload(req.file.path, {
+          upload_preset: 'fast_food'
+        });
+        const newProduct = await product.createProduct(req.query.id, result.secure_url, result.public_id);
 
         if (newProduct) {
           const createdBy = await product.createdBy(newProduct.user_id);
@@ -175,7 +182,7 @@ router.post('/', async (req, res) => {
  * @access  Private
  */
 
-router.put('/products/:productId', async (req, res) => {
+router.put('/products/:productId', _multer.default.single('image'), async (req, res) => {
   if (req.query.role === 'admin' || req.query.role === 'superAdmin') {
     const {
       errors,
@@ -193,7 +200,25 @@ router.put('/products/:productId', async (req, res) => {
       const product = await products.getMenuByProductNumber(req.params.productId);
 
       if (product) {
-        const editMenu = await products.editMenu(req.body, product[0].product_number);
+        let result;
+
+        if (req.file) {
+          await _cloudinary.default.uploader.destroy(product[0].cloudinary_id);
+          result = await _cloudinary.default.uploader.upload(req.file.path, {
+            upload_preset: 'fast_food'
+          });
+        }
+
+        const data = {
+          name: req.body.name || product[0].name,
+          productImg: result ? result.secure_url : product[0].product_img,
+          cloudinaryId: result ? result.public_id : product[0].cloudinary_id,
+          quantity: req.body.quantity || product[0].quantity,
+          price: req.body.price || product[0].price,
+          description: req.body.description || product[0].description,
+          productNumber: product[0].product_number
+        };
+        const editMenu = await products.editMenu(data);
 
         if (editMenu) {
           const updatedBy = await products.createdBy(req.query.id);
@@ -214,6 +239,7 @@ router.put('/products/:productId', async (req, res) => {
         message: 'The product with given id was not found.'
       });
     } catch (error) {
+      console.log(error);
       return res.status(500).json({
         error
       });
@@ -237,6 +263,7 @@ router.delete('/products/:productId', async (req, res) => {
       const product = await products.getMenuByProductNumber(req.params.productId);
 
       if (product[0]) {
+        await _cloudinary.default.uploader.destroy(product[0].cloudinary_id);
         const deleteMenu = await products.deleteProduct(req.query.id, product[0].product_number);
 
         if (deleteMenu.value) {

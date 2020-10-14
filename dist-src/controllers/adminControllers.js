@@ -11,6 +11,8 @@ var _Admin = _interopRequireDefault(require("../models/Admin"));
 
 var _authorize = _interopRequireDefault(require("../helpers/middleware/authorize"));
 
+var _Order = _interopRequireDefault(require("./../models/Order"));
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 const router = _express.default.Router();
@@ -203,6 +205,64 @@ router.delete('/deleteUser/:userId', async (req, res) => {
 
       return res.status(404).json({
         message: 'user not found'
+      });
+    } catch (error) {
+      return res.status(500).json({
+        error
+      });
+    }
+  } else {
+    return res.status(403).json({
+      message: 'Access Denied'
+    });
+  }
+});
+/**
+ * @route PUT api/v1/admin/orders/status/:orderId
+ * @desc  change status
+ * @access  Private
+ */
+
+router.put('/orders/status/:orderId', async (req, res) => {
+  const errors = {};
+
+  if (req.query.role === 'admin' || req.query.role === 'superAdmin') {
+    const adminModel = new _Admin.default(req.body);
+
+    try {
+      const statusArray = ['processing...', 'approved', 'rejected', 'completed'];
+      const orderModel = new _Order.default(req.body);
+      const order = orderModel.getOrderById(req.params.orderId);
+
+      if (order) {
+        if (!statusArray.includes(req.body.status)) {
+          errors.unKnownStatus = 'invalid value for order Status.';
+          return res.status(400).json({
+            status: 'failed',
+            errors
+          });
+        }
+
+        const updatedOrderStatus = await adminModel.UpdateOrder(req.params.orderId, req.body.status);
+
+        if (updatedOrderStatus) {
+          return res.status(200).json({
+            status: 'success',
+            msg: 'Order Status updated successfully',
+            updatedOrderStatus
+          });
+        }
+
+        errors.failedStatus = 'There is a problem updating status';
+        return res.status(400).json({
+          status: 'failed',
+          errors
+        });
+      }
+
+      return res.status(404).json({
+        status: 'success',
+        msg: 'The order with the given id was not found'
       });
     } catch (error) {
       return res.status(500).json({

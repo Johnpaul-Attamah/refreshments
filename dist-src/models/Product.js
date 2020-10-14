@@ -17,13 +17,13 @@ class Product {
     this.product = product;
   }
 
-  async createProduct(adminId) {
+  async createProduct(adminId, img, cloudinaryId) {
     const query = {
       text: `INSERT INTO products (
-                user_id, name, product_img, 
+                user_id, name, product_img, cloudinary_id,
                 quantity, price, description, created_date, modified_date
-            ) VALUES($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *`,
-      values: [adminId, this.product.name, this.product.productImg, this.product.quantity, this.product.price, this.product.description, (0, _moment.default)(new Date()), (0, _moment.default)(new Date())]
+            ) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *`,
+      values: [adminId, this.product.name, img, cloudinaryId, this.product.quantity, this.product.price, this.product.description, (0, _moment.default)(new Date()), (0, _moment.default)(new Date())]
     };
 
     try {
@@ -93,13 +93,13 @@ class Product {
     }
   }
 
-  async editMenu(input, productNumber) {
+  async editMenu(input) {
     const query = {
       text: `UPDATE products 
-          SET name = $1, product_img = $2, quantity = $3, 
-          price = $4, description = $5, modified_date = $6
-          WHERE product_number = $7 returning *`,
-      values: [input.name, input.productImg, input.quantity, input.price, input.description, (0, _moment.default)(new Date()), productNumber]
+          SET name = $1, product_img = $2, cloudinary_id = $3, quantity = $4, 
+          price = $5, description = $6, modified_date = $7
+          WHERE product_number = $8 returning *`,
+      values: [input.name, input.productImg, input.cloudinaryId, input.quantity, input.price, input.description, (0, _moment.default)(new Date()), input.productNumber]
     };
 
     try {

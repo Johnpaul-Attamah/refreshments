@@ -171,9 +171,12 @@ router.post('/', async (req, res) => {
       return res.status(400).json(errors);
     }
 
-    const orderModel = new _Order.default(req.body);
-    const checkProduct = await Promise.all(req.body.items.map(product => orderModel.peekMenu(product)));
-    const productNumbers = [];
+    const orderModel = new _Order.default(req.body); // Check whether the products selected are in the database
+
+    const checkProduct = await Promise.all(req.body.items.map(product => orderModel.peekMenu(product))); // Array to store product_id
+
+    const productNumbers = []; // Array to store both product_id and current product
+
     const inputConProdNums = [];
 
     for (let i = 0; i < checkProduct.length; i += 1) {
@@ -191,10 +194,11 @@ router.post('/', async (req, res) => {
     for (let i = 0; i < productNumbers.length; i += 1) {
       const value = Object.assign(productNumbers[i], req.body.items[i]);
       inputConProdNums.push(value);
-    }
+    } // Array to store products after removing quantities of some products
+
 
     const productArray = [];
-    const getNewQuantity = await Promise.all(req.body.items.map(product => orderModel.checkQuantityINProducts(product.name, product.quantity)));
+    const getNewQuantity = await Promise.all(req.body.items.map(product => orderModel.checkQuantityINProducts(product.name)));
 
     if (getNewQuantity[0]) {
       for (let count = 0; count < req.body.items.length; count += 1) {
@@ -207,13 +211,16 @@ router.post('/', async (req, res) => {
 
         getNewQuantity[count].quantity -= req.body.items[count].quantity;
         productArray.push(getNewQuantity[count]);
-      }
+      } // If user did not enter address, use address from profile
+
 
       if (!req.body.recievingAddress) req.body.recievingAddress = await orderModel.getUserAddress(req.query.id);
       const newOrders = await orderModel.placeOrder(req.body, req.query.id);
 
       if (newOrders) {
-        const fillOrderedProducts = await Promise.all(inputConProdNums.map(inputObj => orderModel.completeProductOrders(inputObj, newOrders.order_id, inputObj.price * inputObj.quantity)));
+        // fill orderproducts table
+        const fillOrderedProducts = await Promise.all(inputConProdNums.map(inputObj => orderModel.completeProductOrders(inputObj, newOrders.order_id, inputObj.price * inputObj.quantity))); // update the product table with correct quantities
+
         const updateNewQuantity = await Promise.all(productArray.map(newQuantity => orderModel.updateNewQuantity(newQuantity.quantity, newQuantity.name)));
 
         if (updateNewQuantity[0]) {

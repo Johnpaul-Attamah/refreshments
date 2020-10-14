@@ -15,7 +15,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 function validateProducts(data) {
   const errors = {};
   data.name = !(0, _isEmpty.default)(data.name) ? data.name : '';
-  data.productImg = !(0, _isEmpty.default)(data.productImg) ? data.productImg : '';
   data.quantity = !(0, _isEmpty.default)(data.quantity) ? data.quantity : '';
   data.price = !(0, _isEmpty.default)(data.price) ? data.price : '';
   data.description = !(0, _isEmpty.default)(data.description) ? data.description : '';
@@ -27,13 +26,6 @@ function validateProducts(data) {
     errors.name = 'Product name must be between 2 and 30 characters';
   }
 
-  if (!_validator.default.isLength(data.productImg, {
-    min: 6,
-    max: 300
-  })) {
-    errors.productImg = 'Not a valid product url';
-  }
-
   if (!_validator.default.isLength(data.description, {
     min: 20,
     max: 1500
@@ -43,10 +35,6 @@ function validateProducts(data) {
 
   if (_validator.default.isEmpty(data.name)) {
     errors.name = 'Product name field is required';
-  }
-
-  if (_validator.default.isEmpty(data.productImg)) {
-    errors.productImg = 'Product image is required';
   }
 
   if (data.quantity.length === 0) {

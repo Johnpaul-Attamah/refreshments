@@ -7,7 +7,11 @@ exports.default = void 0;
 
 var _dbConnection = _interopRequireDefault(require("../dbConnection"));
 
+var _dotenv = _interopRequireDefault(require("dotenv"));
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+_dotenv.default.config();
 
 class CreateTableSchema {
   /**
@@ -37,7 +41,8 @@ class CreateTableSchema {
         product_number uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
         user_id uuid REFERENCES users(user_id),
         name varchar(255) NOT NULL,
-        product_img text NOT Null,
+        product_img text NOT NUll,
+        cloudinary_id text NOT NULL,
         quantity integer NOT NULL,
         price float NOT NULL,
         description text NOT NULL,
@@ -77,6 +82,8 @@ class CreateTableSchema {
       await this.pool.query(this.createProductsOrdersTable);
       return this.pool.end;
     } catch (err) {
+      console.log(process.env.NODE_ENV);
+      console.log(err);
       return err;
     }
   }
