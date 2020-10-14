@@ -4,7 +4,7 @@
   "description": "Food Delvery Application for large restaurants with presence everywhere",
   "main": "index.js",
   "scripts": {
-    "start": "npm run prod",
+    "start": "npm run prod", 
     "build": "npm-run-all clean transpile",
     "prod": "npm-run-all build prod-server",
     "server": "npm run dev-server",

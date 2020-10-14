@@ -5,18 +5,17 @@ dotenv.config();
 
 let dbConnection;
 
-if (process.env.NODE_ENV == 'production') {
+if (process.env.NODE_ENV === 'production') {
   dbConnection = process.env.PROD_DB_URI;
 }
 
-if (process.env.NODE_ENV == 'test') {
+if (process.env.NODE_ENV === 'test') {
   dbConnection = process.env.TEST_DB_URI;
 }
 
-if (process.env.NODE_ENV == 'development') {
+if (process.env.NODE_ENV === 'development') {
   dbConnection = process.env.DEV_DB_URI;
 }
-
 
 /**
  * function pool returns a connection to database
